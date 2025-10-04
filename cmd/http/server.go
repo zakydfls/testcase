@@ -98,7 +98,7 @@ func (s *Server) healthCheck(c *gin.Context) {
 
 func (s *Server) Start() error {
 	s.server = &http.Server{
-		Addr:         ":" + s.config.HttpServer.Port,
+		Addr:         ":" + os.Getenv("PORT"),
 		Handler:      s.router,
 		ReadTimeout:  15 * time.Second,
 		WriteTimeout: 15 * time.Second,
@@ -106,7 +106,7 @@ func (s *Server) Start() error {
 	}
 
 	go func() {
-		log.Printf("🚀 Server starting on port %s (env: %s)", s.config.HttpServer.Port, s.config.HttpServer.Env)
+		log.Printf("🚀 Server starting on port %s (env: %s)", os.Getenv("PORT"), s.config.HttpServer.Env)
 		if err := s.server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("Failed to start server: %v", err)
 		}
