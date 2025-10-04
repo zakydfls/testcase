@@ -1,0 +1,139 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+pos-app
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+coverage.html
+coverage.out
+
+# Dependency directories (remove the comment below to include it)
+vendor/
+
+# Go workspace file
+go.work
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+.env.production
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Log files
+*.log
+logs/
+
+# Database files
+*.db
+*.sqlite
+
+# Backup files
+*.bak
+*.backup
+
+# Temporary files
+tmp/
+temp/
+.tmp/
+
+# Build artifacts
+build/
+dist/
+
+# Docker volumes (if using named volumes)
+postgres_data/
+redis_data/
+
+# Air (live reload tool) temporary files
+.air/
+
+# Delve debugger
+debug
+
+# Go module cache
+*.sum.backup
+
+# Coverage reports
+coverage/
+*.cover
+
+# Benchmarking results
+*.bench
+
+# Profiling data
+*.pprof
+*.prof
+
+# Documentation build
+docs/_build/
+
+# Local configuration overrides
+config.local.*
+*local.yml
+*local.yaml
+
+# Security and secrets
+*.pem
+*.key
+*.crt
+*.p12
+secrets/
+.secrets/
+
+# Node.js (if you have any frontend assets)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python (if you have any Python scripts)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Rust (if you have any Rust components)
+target/
+Cargo.lock
+
+# Local development
+.local/
