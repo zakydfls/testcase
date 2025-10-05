@@ -76,7 +76,7 @@ func setupMiddleware(router *gin.Engine, cfg *config.Config) {
 
 func (s *Server) setupRoutes() {
 	s.router.GET("/health", s.healthCheck)
-	s.router.GET("/", func(c *gin.Context) {
+	s.router.GET("", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "Welcome to Testcase API🚀",
 		})
