@@ -16,7 +16,7 @@ type Response struct {
 	Error     interface{} `json:"error,omitempty"`
 }
 type PaginationResult struct {
-	List     interface{}    `json:"data"`
+	List     interface{}    `json:"list"`
 	Metadata PaginationMeta `json:"metadata"`
 }
 
@@ -51,7 +51,6 @@ func PaginatedResponse(ctx *gin.Context, result interface{}, totalItems int64, p
 	response := gin.H{
 		"code":    http.StatusOK,
 		"message": message,
-		"result":  result,
 		"data": PaginationResult{
 			List: result,
 			Metadata: PaginationMeta{
@@ -77,6 +76,7 @@ func PaginatedResponse(ctx *gin.Context, result interface{}, totalItems int64, p
 func SuccessResponse(ctx *gin.Context, data interface{}, message string, statusCode int) {
 	requestID := ctx.GetString("request_id")
 	response := Response{
+		Success: true,
 		Code:    statusCode,
 		Message: message,
 		Data:    data,

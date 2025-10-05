@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"testcase/internal/helpers"
 	"testcase/internal/infrastructures/database"
 	"testcase/internal/modules/document/entities"
 
@@ -50,4 +51,27 @@ func (r *documentRepositoryImpl) UpdateDocument(ctx context.Context, doc *entiti
 	}
 
 	return nil
+}
+
+func (r *documentRepositoryImpl) ListDocuments(ctx context.Context, params *helpers.PaginationParams) ([]entities.Document, int64, error) {
+	var docs []entities.Document
+	var total int64
+
+	query := r.db.WithContext(ctx).Model(&entities.Document{})
+
+	if err := query.Count(&total).Error; err != nil {
+		return nil, 0, fmt.Errorf("failed to count documents: %w", err)
+	}
+
+	if params != nil {
+		limit := params.Limit
+		offset := (params.Page - 1) * params.Limit
+		query = query.Limit(limit).Offset(offset)
+	}
+
+	if err := query.Find(&docs).Error; err != nil {
+		return nil, 0, fmt.Errorf("failed to list documents: %w", err)
+	}
+
+	return docs, total, nil
 }

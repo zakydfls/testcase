@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"net/http"
+	"testcase/internal/helpers"
 	"testcase/internal/middlewares"
 	"testcase/internal/modules/document/dto"
 	"testcase/internal/modules/document/services"
@@ -80,4 +81,22 @@ func (h *DocumentHandler) ResubmitAction(c *gin.Context) {
 	}
 
 	utils.SuccessResponse(c, document, "Document resubmitted successfully", http.StatusOK)
+}
+
+func (h *DocumentHandler) ListDocuments(c *gin.Context) {
+	params := helpers.ParsePaginationParams(c)
+	if err := c.ShouldBindQuery(&params); err != nil {
+		middlewares.ValidationErrorResponse(c, err)
+		return
+	}
+
+	ctx := c.Request.Context()
+	documents, total, err := h.documentService.PaginateDocument(ctx, params)
+	if err != nil {
+		panic(err)
+	}
+
+	list := helpers.CreatePaginationResult(documents, total, params)
+
+	utils.SuccessResponse(c, list, "Documents retrieved successfully", http.StatusOK)
 }

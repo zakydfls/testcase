@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"testcase/internal/helpers"
 	"testcase/internal/modules/document/dto"
 	"testcase/internal/modules/document/entities"
 	"testcase/internal/modules/document/repositories"
@@ -227,4 +228,13 @@ func (d *documentServiceImpl) processApproval(document *entities.Document, comme
 		return utils.NewAppError(utils.ErrInvalidRequest, fmt.Errorf("invalid approver level: %d", document.CurrentApprover))
 	}
 	return nil
+}
+
+func (d *documentServiceImpl) PaginateDocument(ctx context.Context, params *helpers.PaginationParams) ([]entities.Document, int64, error) {
+	documents, total, err := d.repo.ListDocuments(ctx, params)
+	if err != nil {
+		return nil, 0, utils.NewAppError(utils.ErrInternalServer, fmt.Errorf("failed to paginate documents: %w", err))
+	}
+
+	return documents, total, nil
 }

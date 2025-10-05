@@ -16,5 +16,6 @@ func RegisterDocumentRoutes(rg *gin.RouterGroup, h *handlers.DocumentHandler, au
 		documentRoutes.POST("/:id/action", h.SubmitAction)
 		documentRoutes.GET("/:id", h.GetDocument)
 		documentRoutes.PUT("/:id", h.ResubmitAction)
+		documentRoutes.GET("/", h.ListDocuments)
 	}
 }
