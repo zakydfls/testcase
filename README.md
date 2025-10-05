@@ -1,6 +1,6 @@
 # Document Approval System - Backend
 
-Production-ready Document Approval/Signing system backend built with Go, Gin, and GORM.
+Document Approval/Signing system backend built with Go, Gin, and GORM.
 
 ## Features
 
@@ -42,7 +42,7 @@ Document Creation → Admin1 Approval → Admin2 Approval → Admin3 Approval �
 - **Database**: PostgreSQL
 - **Authentication**: JWT
 - **Password Hashing**: bcrypt
-- **Configuration**: Environment variables
+- **Configuration**: Environment variables (Godotenv)
 - **Error Handling**: Custom AppError system
 
 ## Quick Start
@@ -73,16 +73,6 @@ docker-compose up postgres -d
 go run cmd/main.go
 ```
 
-### 3. Docker Development
-
-```bash
-# Start all services
-docker-compose up -d
-
-# Or start specific services
-docker-compose up postgres redis -d
-```
-
 ## Environment Variables
 
 | Variable | Description | Default |
@@ -102,23 +92,17 @@ docker-compose up postgres redis -d
 
 ## API Endpoints
 
-### Authentication
-- `POST /api/v1/users/register` - User registration
+### User
+- `POST /api/v1/users` - User creation
 - `POST /api/v1/users/login` - User login
 - `POST /api/v1/users/refresh` - Refresh JWT token
-- `POST /api/v1/users/logout` - User logout
-
-### User Management
-- `GET /api/v1/users` - List users (Admin only)
-- `GET /api/v1/users/:id` - Get user by ID
-- `PUT /api/v1/users/:id` - Update user
-- `DELETE /api/v1/users/:id` - Delete user (Admin only)
 
 ### Document Management
 - `POST /api/v1/documents` - Create new document
 - `GET /api/v1/documents/:id` - Get document details (Public)
 - `POST /api/v1/documents/:id/action` - Approve/Reject document (Auth required)
 - `PUT /api/v1/documents/:id/resubmit` - Resubmit rejected document (Auth required)
+- `GET /api/v1/documents` - Get pagination document
 
 ## User Roles
 
@@ -293,7 +277,7 @@ curl -X POST http://localhost:8080/api/v1/users/register \
 
 3. **Test rejection workflow**:
    - Create document as user
-   - Login as admin2 and reject
+   - Login as admin1/2/3 and reject
    - Verify document status is "rejected"
    - Resubmit document
    - Verify process restarts from admin1
@@ -317,19 +301,6 @@ docker run -p 8080:8080 \
   -e ACCESS_TOKEN_SECRET=your-secret \
   -e REFRESH_TOKEN_SECRET=your-refresh-secret \
   testcase-app
-```
-
-### Binary Deployment
-
-```bash
-# Build for production
-CGO_ENABLED=0 GOOS=linux go build -o testcase-app cmd/main.go
-
-# Set environment variables and run
-export HTTP_ENV=production
-export DB_HOST=your-db-host
-# ... other env vars
-./testcase-app
 ```
 
 ## Security Features
