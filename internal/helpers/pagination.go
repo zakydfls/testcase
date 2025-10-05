@@ -71,43 +71,34 @@ func CreatePaginationResult(data interface{}, total int64, params *PaginationPar
 	totalPages := int(math.Ceil(float64(total) / float64(params.Limit)))
 
 	result := &utils.PaginationResult{
-		Data:        data,
-		Total:       total,
-		Page:        params.Page,
-		Limit:       params.Limit,
-		TotalPages:  totalPages,
-		HasNextPage: params.Page < totalPages,
-		HasPrevPage: params.Page > 1,
+		List: data,
+		Metadata: utils.PaginationMeta{
+			Total:       total,
+			Page:        params.Page,
+			Limit:       params.Limit,
+			TotalPages:  totalPages,
+			HasNextPage: params.Page < totalPages,
+			HasPrevPage: params.Page > 1,
+		},
 	}
 
-	if result.HasNextPage {
+	if result.Metadata.HasNextPage {
 		nextPage := params.Page + 1
-		result.NextPage = &nextPage
+		result.Metadata.NextPage = &nextPage
 	}
 
-	if result.HasPrevPage {
+	if result.Metadata.HasPrevPage {
 		prevPage := params.Page - 1
-		result.PreviousPage = &prevPage
+		result.Metadata.PreviousPage = &prevPage
 	}
 
 	return result
 }
 
-type PaginationMeta struct {
-	Total        int64 `json:"total"`
-	Page         int   `json:"page"`
-	Limit        int   `json:"limit"`
-	TotalPages   int   `json:"total_pages"`
-	HasNextPage  bool  `json:"has_next_page"`
-	HasPrevPage  bool  `json:"has_previous_page"`
-	NextPage     *int  `json:"next_page"`
-	PreviousPage *int  `json:"previous_page"`
-}
-
-func CreatePaginationMeta(total int64, params *PaginationParams) *PaginationMeta {
+func CreatePaginationMeta(total int64, params *PaginationParams) *utils.PaginationMeta {
 	totalPages := int(math.Ceil(float64(total) / float64(params.Limit)))
 
-	meta := &PaginationMeta{
+	meta := &utils.PaginationMeta{
 		Total:       total,
 		Page:        params.Page,
 		Limit:       params.Limit,

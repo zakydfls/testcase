@@ -85,7 +85,21 @@ func (d *documentServiceImpl) ResubmitAction(ctx context.Context, id string) (*e
 		return nil, utils.NewAppError(utils.ErrInvalidRequest, fmt.Errorf("only rejected documents can be resubmitted"))
 	}
 
-	d.resetDocumentForResubmission(document)
+	now := time.Now()
+
+	document.Status = entities.StatusNeedRevision
+	document.CurrentApprover = 1
+	document.UpdatedAt = now
+	document.Approver1Action = nil
+	document.Approver1Comment = nil
+	document.Approver1Date = nil
+	document.Approver2Action = nil
+	document.Approver2Comment = nil
+	document.Approver2Date = nil
+	document.Approver3Action = nil
+	document.Approver3Comment = nil
+	document.Approver3Date = nil
+
 	if err := d.repo.UpdateDocument(ctx, document); err != nil {
 		return nil, utils.NewAppError(utils.ErrInternalServer, fmt.Errorf("failed to resubmit document: %w", err))
 	}
@@ -164,13 +178,25 @@ func (d *documentServiceImpl) processRejection(document *entities.Document, comm
 		document.Approver2Action = &rejectAction
 		document.Approver2Comment = comment
 		document.Approver2Date = timestamp
+		document.Approver1Action = nil
+		document.Approver1Comment = nil
+		document.Approver1Date = nil
 	case 3:
 		document.Approver3Action = &rejectAction
 		document.Approver3Comment = comment
 		document.Approver3Date = timestamp
+		document.Approver1Action = nil
+		document.Approver1Comment = nil
+		document.Approver1Date = nil
+		document.Approver2Action = nil
+		document.Approver2Comment = nil
+		document.Approver2Date = nil
+
 	default:
 		return utils.NewAppError(utils.ErrInvalidRequest, fmt.Errorf("invalid approver level: %d", document.CurrentApprover))
 	}
+
+	document.CurrentApprover = 1
 
 	return nil
 }
@@ -200,27 +226,5 @@ func (d *documentServiceImpl) processApproval(document *entities.Document, comme
 	default:
 		return utils.NewAppError(utils.ErrInvalidRequest, fmt.Errorf("invalid approver level: %d", document.CurrentApprover))
 	}
-
 	return nil
-}
-
-func (d *documentServiceImpl) resetDocumentForResubmission(document *entities.Document) {
-	now := time.Now()
-
-	document.Status = entities.StatusNeedRevision
-	document.CurrentApprover = 1
-
-	document.Approver1Action = nil
-	document.Approver1Comment = nil
-
-	document.Approver1Date = nil
-
-	document.Approver2Action = nil
-	document.Approver2Comment = nil
-	document.Approver2Date = nil
-
-	document.Approver3Action = nil
-	document.Approver3Comment = nil
-	document.Approver3Date = nil
-	document.UpdatedAt = now
 }

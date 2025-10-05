@@ -9,6 +9,7 @@ import (
 	"testcase/internal/infrastructures/database"
 	"testcase/internal/modules/user/entities"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -36,7 +37,7 @@ func (r *userRepositoryImpl) FindByEmail(email string) (*entities.User, error) {
 	return &user, nil
 }
 
-func (r *userRepositoryImpl) FindByID(id string) (*entities.User, error) {
+func (r *userRepositoryImpl) FindByID(id uuid.UUID) (*entities.User, error) {
 	var user entities.User
 
 	err := r.db.Where("id = ?", id).First(&user).Error

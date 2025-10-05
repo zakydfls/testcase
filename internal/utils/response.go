@@ -16,15 +16,19 @@ type Response struct {
 	Error     interface{} `json:"error,omitempty"`
 }
 type PaginationResult struct {
-	Data         interface{} `json:"data"`
-	Total        int64       `json:"total"`
-	Page         int         `json:"page"`
-	Limit        int         `json:"limit"`
-	TotalPages   int         `json:"total_pages"`
-	HasNextPage  bool        `json:"has_next_page"`
-	HasPrevPage  bool        `json:"has_previous_page"`
-	NextPage     *int        `json:"next_page"`
-	PreviousPage *int        `json:"previous_page"`
+	List     interface{}    `json:"data"`
+	Metadata PaginationMeta `json:"metadata"`
+}
+
+type PaginationMeta struct {
+	Total        int64 `json:"total"`
+	Page         int   `json:"page"`
+	Limit        int   `json:"limit"`
+	TotalPages   int   `json:"total_pages"`
+	HasNextPage  bool  `json:"has_next_page"`
+	HasPrevPage  bool  `json:"has_previous_page"`
+	NextPage     *int  `json:"next_page"`
+	PreviousPage *int  `json:"previous_page"`
 }
 
 func PaginatedResponse(ctx *gin.Context, result interface{}, totalItems int64, page, limit int, message string) {
@@ -48,16 +52,18 @@ func PaginatedResponse(ctx *gin.Context, result interface{}, totalItems int64, p
 		"code":    http.StatusOK,
 		"message": message,
 		"result":  result,
-		"metadata": PaginationResult{
-			Data:         result,
-			Total:        totalItems,
-			Page:         page,
-			Limit:        limit,
-			TotalPages:   totalPages,
-			HasNextPage:  hasNextPage,
-			HasPrevPage:  hasPrevPage,
-			NextPage:     nextPage,
-			PreviousPage: prevPage,
+		"data": PaginationResult{
+			List: result,
+			Metadata: PaginationMeta{
+				Total:        totalItems,
+				Page:         page,
+				Limit:        limit,
+				TotalPages:   totalPages,
+				HasNextPage:  hasNextPage,
+				HasPrevPage:  hasPrevPage,
+				NextPage:     nextPage,
+				PreviousPage: prevPage,
+			},
 		},
 	}
 
@@ -118,7 +124,7 @@ func HandleRouteNotFound(ctx *gin.Context) {
 	errorInfo := GetError(ErrRouteNotFound)
 
 	response := Response{
-		Success: true,
+		Success: false,
 		Code:    errorInfo.Code,
 		Key:     errorInfo.Key,
 		Message: errorInfo.Message,

@@ -41,7 +41,7 @@ func InitHttpRoutes(r *gin.Engine, db *database.Database) {
 
 	v1 := r.Group("api/v1")
 	{
-		user.RegisterUserRoutes(v1, userHandler)
+		user.RegisterUserRoutes(v1, userHandler, authMware)
 		document.RegisterDocumentRoutes(v1, documentHandler, authMware)
 	}
 

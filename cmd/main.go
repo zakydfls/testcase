@@ -32,7 +32,7 @@ func main() {
 
 	server := http.NewServer(cfg, db)
 
-	log.Println("🎯 Starting POS application...")
+	log.Println("🎯 Starting Testcase application...")
 	if err := server.Start(); err != nil {
 		log.Fatalf("Failed to start server: %v", err)
 	}

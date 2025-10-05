@@ -76,6 +76,11 @@ func setupMiddleware(router *gin.Engine, cfg *config.Config) {
 
 func (s *Server) setupRoutes() {
 	s.router.GET("/health", s.healthCheck)
+	s.router.GET("/", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Welcome to Testcase API🚀",
+		})
+	})
 
 	routes.InitHttpRoutes(s.router, s.database)
 }
@@ -98,7 +103,7 @@ func (s *Server) healthCheck(c *gin.Context) {
 
 func (s *Server) Start() error {
 	s.server = &http.Server{
-		Addr:         ":" + os.Getenv("PORT"),
+		Addr:         ":" + s.config.HttpServer.Port,
 		Handler:      s.router,
 		ReadTimeout:  15 * time.Second,
 		WriteTimeout: 15 * time.Second,
@@ -106,7 +111,7 @@ func (s *Server) Start() error {
 	}
 
 	go func() {
-		log.Printf("🚀 Server starting on port %s (env: %s)", os.Getenv("PORT"), s.config.HttpServer.Env)
+		log.Printf("🚀 Server starting on port %s (env: %s)", s.config.HttpServer.Port, s.config.HttpServer.Env)
 		if err := s.server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("Failed to start server: %v", err)
 		}

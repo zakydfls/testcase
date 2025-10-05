@@ -71,7 +71,7 @@ func (jm *JWTManager) GenerateRefreshToken(jwtPayload *JWTPayload) (string, erro
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString([]byte(jm.secretKey))
+	return token.SignedString([]byte(jm.refreshSecretKey))
 }
 
 func (jm *JWTManager) GenerateTokenPair(jwtPayload *JWTPayload) (string, string, error) {

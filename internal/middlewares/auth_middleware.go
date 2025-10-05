@@ -2,6 +2,7 @@ package middlewares
 
 import (
 	"context"
+	"fmt"
 	"strings"
 	"testcase/internal/utils"
 	"testcase/package/securities"
@@ -52,6 +53,7 @@ func (am *AuthMiddleware) Auth() gin.HandlerFunc {
 func (am *AuthMiddleware) AuthRefresh() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		token := am.extractToken(c)
+		fmt.Println("Refresh Token:", token)
 		if token == "" {
 			utils.ErrorResponse(c, utils.ErrUnauthorized, "Refresh token required")
 			c.Abort()
@@ -65,9 +67,16 @@ func (am *AuthMiddleware) AuthRefresh() gin.HandlerFunc {
 			return
 		}
 
+		fmt.Println("Refresh Token Claims:", claims.Username)
+
 		c.Set(utils.UserIDContextKey, claims.UserID)
 		c.Set(utils.UsernameContextKey, claims.Username)
 		c.Set(utils.RoleContextKey, claims.Role)
+		ctx := c.Request.Context()
+		ctx = context.WithValue(ctx, utils.UserIDContextKey, claims.UserID)
+		ctx = context.WithValue(ctx, utils.UsernameContextKey, claims.Username)
+		ctx = context.WithValue(ctx, utils.RoleContextKey, string(claims.Role))
+		c.Request = c.Request.WithContext(ctx)
 		c.Next()
 	}
 }

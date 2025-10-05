@@ -6,10 +6,12 @@ import (
 	"testcase/internal/modules/user/dto"
 	"testcase/internal/modules/user/entities"
 	"testcase/internal/modules/user/repositories"
-	"testcase/internal/modules/user/types"
+	"testcase/internal/modules/user/responses"
 	"testcase/internal/utils"
 	"testcase/package/securities"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type userServiceImpl struct {
@@ -50,7 +52,7 @@ func (u *userServiceImpl) CreateUser(ctx context.Context, input *dto.CreateUserI
 	return user, nil
 }
 
-func (u *userServiceImpl) LoginUser(ctx context.Context, input *dto.LoginUserInput) (*types.LoginResponse, error) {
+func (u *userServiceImpl) LoginUser(ctx context.Context, input *dto.LoginUserInput) (*responses.LoginResponse, error) {
 	user, err := u.userRepo.FindByEmail(input.Email)
 	if err != nil {
 		return nil, utils.NewAppError(utils.ErrNotFound, fmt.Errorf("user with email %s not found", input.Email))
@@ -80,7 +82,33 @@ func (u *userServiceImpl) LoginUser(ctx context.Context, input *dto.LoginUserInp
 		return nil, updateErr
 	}
 
-	return &types.LoginResponse{
+	return &responses.LoginResponse{
+		Token: securities.TokenPair{
+			AccessToken:  accessToken,
+			RefreshToken: refreshToken,
+		},
+		User: *user,
+	}, nil
+}
+
+func (u *userServiceImpl) RefreshToken(ctx context.Context) (*responses.LoginResponse, error) {
+	userId := ctx.Value(utils.UserIDContextKey)
+
+	user, err := u.userRepo.FindByID(userId.(uuid.UUID))
+	if err != nil {
+		return nil, utils.NewAppError(utils.ErrNotFound, fmt.Errorf("user not found: %w", err))
+	}
+
+	accessToken, refreshToken, err := u.jwtManager.GenerateTokenPair(&securities.JWTPayload{
+		UserID:   user.ID,
+		Username: user.Username,
+		Role:     user.Role,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &responses.LoginResponse{
 		Token: securities.TokenPair{
 			AccessToken:  accessToken,
 			RefreshToken: refreshToken,

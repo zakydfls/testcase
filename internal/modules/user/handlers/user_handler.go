@@ -49,3 +49,12 @@ func (h *UserHandler) LoginUser(c *gin.Context) {
 
 	utils.SuccessResponse(c, loginResponse, "Login successful", http.StatusOK)
 }
+
+func (h *UserHandler) RefreshToken(c *gin.Context) {
+	refreshResponse, err := h.userService.RefreshToken(c.Request.Context())
+	if err != nil {
+		panic(err)
+	}
+
+	utils.SuccessResponse(c, refreshResponse, "Token refreshed successfully", http.StatusOK)
+}
