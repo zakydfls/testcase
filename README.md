@@ -51,7 +51,7 @@ Document Creation → Admin1 Approval → Admin2 Approval → Admin3 Approval �
 
 ```bash
 # Clone the repository
-git clone
+git clone https://github.com/zakydfls/testcase.git
 cd testcase
 
 # Copy environment file
