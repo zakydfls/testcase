@@ -103,6 +103,10 @@ func ErrorResponse(c *gin.Context, errCode ErrorCode, err interface{}) {
 	case string:
 		message = e
 		errorKey = errCode.Key
+	case []string:
+		message = "Validation error"
+		errorKey = errCode.Key
+		err = e
 	default:
 		message = errCode.Message
 		errorKey = errCode.Key
@@ -111,7 +115,8 @@ func ErrorResponse(c *gin.Context, errCode ErrorCode, err interface{}) {
 	response := Response{
 		Success: false,
 		Message: message,
-		Error:   errorKey,
+		Key:     errorKey,
+		Error:   err,
 		Code:    errCode.Code,
 		Data:    nil,
 	}
