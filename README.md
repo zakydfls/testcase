@@ -3,7 +3,7 @@
 Document Approval/Signing system backend built with Go, Gin, and GORM.
 
 ## API Deployed on
-<https://zakydfls.me/api/v1>
+<https://zakydfls.me/>
 
 ## Features
 
